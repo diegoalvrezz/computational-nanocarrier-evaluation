@@ -64,7 +64,7 @@ Plataforma computacional para la evaluación sistemática de 58 moléculas repre
 │   ├── anexos.pdf
 │   ├── memoria.qmd
 │   ├── anexos.qmd
-│   ├── evidencia_cronologica
+│   ├── evidencia_cronologica   # Recuperación de toda la actividad realizada en el Cenits dispuesta en una gráfica
 │   └── qmd/                # Capítulos en formato Quarto
 ├── results/                # Resultados y figuras
 │   ├── figures/            # Todas las figuras del TFM
