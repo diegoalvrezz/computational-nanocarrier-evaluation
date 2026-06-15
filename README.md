@@ -64,6 +64,7 @@ Plataforma computacional para la evaluación sistemática de 58 moléculas repre
 │   ├── anexos.pdf
 │   ├── memoria.qmd
 │   ├── anexos.qmd
+│   ├── evidencia_cronologica
 │   └── qmd/                # Capítulos en formato Quarto
 ├── results/                # Resultados y figuras
 │   ├── figures/            # Todas las figuras del TFM
