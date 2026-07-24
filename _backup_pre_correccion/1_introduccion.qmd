@@ -34,7 +34,7 @@ moléculas, y ninguno integra cálculos mecanocuánticos de estructura
 electrónica para obtener geometrías precisas y propiedades como punto
 de partida [@maingi2012].
 
-Este trabajo construye una plataforma computacional para evaluar 60
+Este trabajo construye una plataforma computacional para evaluar 58
 moléculas representativas de nanopartículas poliméricas y dendrímeros
 frente a las seis proteínas descritas anteriormente. Los objetivos
 concretos son: obtener geometrías moleculares precisas y propiedades

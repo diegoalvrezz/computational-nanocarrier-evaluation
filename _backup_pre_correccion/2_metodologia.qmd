@@ -4,7 +4,7 @@
 
 ## Base de datos molecular
 
-Se construyó una biblioteca de 60 moléculas en cuatro categorías: monómeros
+Se construyó una biblioteca de 58 moléculas en cuatro categorías: monómeros
 y productos de degradación de polímeros biodegradables (ácido láctico,
 glicólico, $\varepsilon$-caprolactona y derivados), oligómeros y unidades
 de dendrímero PAMAM (poliaminas, oligómeros de quitosano), fármacos modelo
@@ -89,27 +89,19 @@ puentes salinos e interacciones entre anillos aromáticos. Se procesaron
 
 ## Descriptores moleculares
 
-Se calcularon inicialmente 4179 descriptores numéricos brutos para
-caracterizar cada molécula, agrupados en cinco familias: descriptores 2D
-calculados con RDKit [@rdkit] (38 valores: peso molecular, lipofilia,
-superficie polar, grupos funcionales, índices de complejidad topológica);
-perfiles sigma COSMO-RS (100 valores que describen la distribución de
-densidad electrónica superficial); fingerprints Morgan/ECFP4 (2048 bits
-que codifican los patrones de subestructura química del entorno de cada
-átomo hasta un radio definido) y MACCS keys (167 bits que representan la
-presencia o ausencia de subestructuras químicas predefinidas) con RDKit;
-y descriptores 3D calculados con Mordred [@moriwaki2018] (1826 valores
-sobre las geometrías DFT, entre los que destacan los momentos de inercia,
-el volumen molecular, los índices de forma y los autovalores de la matriz
-de distancias). Tras eliminar columnas con más del 50\,\% de valores
-ausentes y columnas de varianza nula (bits de fingerprint constantes para
-todas las moléculas del dataset, o descriptores 3D no calculables para
-alguna estructura), el espacio final de descriptores efectivamente
-utilizado en los modelos se reduce a 1097 variables: 100 perfiles sigma,
-529 bits de Morgan/ECFP4, 120 bits de MACCS, 38 descriptores 2D y 310
-descriptores 3D de Mordred (incluyendo 4 que Mordred recalcula con el
-mismo nombre que un descriptor 2D --- BertzCT, TPSA, LabuteASA y MW ---
-y que se conservan como variables independientes).
+Se calcularon 2908 descriptores numéricos para caracterizar cada
+molécula. Se agrupan en cinco familias: descriptores 2D calculados con
+RDKit [@rdkit] (38 valores: peso molecular, lipofilia, superficie polar,
+grupos funcionales, índices de complejidad topológica); perfiles sigma
+COSMO-RS (100 valores que describen la distribución de densidad
+electrónica superficial); fingerprints Morgan/ECFP4 (2048 bits que
+codifican los patrones de subestructura química del entorno de cada
+átomo hasta un radio definido) y MACCS keys (167 bits que representan
+la presencia o ausencia de subestructuras químicas predefinidas) con
+RDKit; y descriptores 3D calculados con Mordred [@moriwaki2018] (1826
+valores sobre las geometrías DFT, entre los que destacan los momentos
+de inercia, el volumen molecular, los índices de forma y los
+autovalores de la matriz de distancias).
 
 ## Propiedades ADMET
 
@@ -123,12 +115,9 @@ hidrógeno predice una deficiente absorción por vía oral) y accesibilidad sint
 
 ## Modelos de aprendizaje automático
 
-El dataset final tiene 56 moléculas (de las 60 de la biblioteca original,
-tras exigir que cada molécula tenga geometría DFT convergida, docking
-válido frente a las seis proteínas y descriptores completos) y 1097
-descriptores tras la limpieza descrita arriba. Antes del entrenamiento se
-aplica escalado estadístico (RobustScaler) y se seleccionan las 200
-variables más informativas para cada proteína (SelectKBest). Se
+El dataset final tiene 56 moléculas y 2908 descriptores. Antes del
+entrenamiento se aplica escalado estadístico (RobustScaler) y se seleccionan
+las 200 variables más informativas para cada proteína (SelectKBest). Se
 desarrollaron tres modelos:
 
 \textbf{Modelo 1.} Regresión de afinidad: Random Forest (300 árboles),
@@ -142,12 +131,8 @@ en mayor medida los errores grandes).
 
 \textbf{Modelo 2.} Índice de Eficiencia de Transporte (ITI): puntuación de
 0 a 100 que combina las seis afinidades de docking en una métrica única.
-Premia la afinidad por TfR1, FR$\alpha$ (40\,\% del índice), HSA (25\,\%)
-y lisozima (20\,\%). Penaliza la afinidad por P-gp y CYP3A4 (15\,\%).
-Incluye un factor corrector por peso molecular (\texttt{mw\_factor}) que
-penaliza moléculas muy pequeñas o muy grandes, con umbrales de 0,1 para
-MW\,$<$\,60\,Da, 0,4 para 60--100\,Da, 0,7 para 100--150\,Da, 1,0 para
-150--900\,Da y 0,8 para MW\,$>$\,900\,Da.
+Premia la afinidad por TfR1, FR$\alpha$, HSA y lisozima. Penaliza la
+afinidad por P-gp y CYP3A4. Incluye un factor corrector por peso molecular.
 
 \textbf{Modelo 3.} Clasificador binario: Random Forest, Gradient Boosting y
 SVC para clasificar moléculas como favorables (ITI $\geq$ 50) o

@@ -4,27 +4,32 @@
 
 ### Espacio de descriptores
 
-El dataset ML final tiene 56 moléculas y 2908 características numéricas. La
-tabla siguiente resume las cinco familias de descriptores.
+El dataset ML final tiene 56 moléculas. De un total de 4179 descriptores
+brutos calculados en cinco familias, se retuvieron 1097 tras eliminar
+columnas con más del 50\,\% de valores ausentes y columnas de varianza
+nula (bits de fingerprint constantes para las 56 moléculas, o
+descriptores 3D no calculables para alguna estructura). La tabla
+siguiente resume ambos recuentos por familia.
 
 \begin{table}[!h]
 \centering
-\caption{Familias de descriptores moleculares calculados.}
+\caption{Familias de descriptores moleculares calculados y retenidos tras la limpieza.}
 \label{tab:descriptores}
-\begin{tabular}{llr}
+\begin{tabular}{llrr}
 \toprule
-\textbf{Familia} & \textbf{Herramienta} & \textbf{Dimensión} \\
+\textbf{Familia} & \textbf{Herramienta} & \textbf{Calculados} & \textbf{Retenidos} \\
 \midrule
-Descriptores 2D           & RDKit               &   38 \\
-Perfiles sigma COSMO-RS   & TURBOMOLE     &  100 \\
-Fingerprints Morgan/ECFP4 & RDKit               & 2048 \\
-MACCS keys                & RDKit               &  167 \\
-Descriptores 3D Mordred   & Mordred      & 555$^*$ \\
+Descriptores 2D           & RDKit         &   38 &   38 \\
+Perfiles sigma COSMO-RS   & TURBOMOLE     &  100 &  100 \\
+Fingerprints Morgan/ECFP4 & RDKit         & 2048 &  529 \\
+MACCS keys                & RDKit         &  167 &  120 \\
+Descriptores 3D Mordred$^*$ & Mordred     & 1826 &  310 \\
 \midrule
-\textbf{Total}            &                                 & \textbf{2908} \\
+\textbf{Total}             &              & \textbf{4179} & \textbf{1097} \\
 \bottomrule
-\multicolumn{3}{l}{$^*$De 1826 calculados, se retuvieron 555 sin valores} \\
-\multicolumn{3}{l}{perdidos para las 56 moléculas del dataset.} \\
+\multicolumn{4}{l}{$^*$Incluye 4 descriptores que Mordred recalcula con el} \\
+\multicolumn{4}{l}{mismo nombre que un descriptor 2D (BertzCT, TPSA, LabuteASA,} \\
+\multicolumn{4}{l}{MW), conservados como variables independientes.} \\
 \end{tabular}
 \end{table}
 
@@ -53,17 +58,22 @@ tamaño del dataset.
 \textbf{FR$\alpha$} & \textbf{Lisozima} & \textbf{HSA} \\
 \midrule
 \multicolumn{7}{l}{\textit{R²}} \\
-Random Forest     & 0,817 & 0,620 & 0,753 & 0,530 & 0,712 & 0,565 \\
-Gradient Boosting & 0,746 & 0,612 & 0,742 & 0,516 & 0,668 & 0,589 \\
-SVR               & 0,783 & 0,614 & 0,660 & 0,537 & 0,698 & 0,651 \\
+Random Forest     & 0,803 & 0,543 & 0,808 & 0,517 & 0,716 & 0,658 \\
+Gradient Boosting & 0,823 & 0,535 & 0,857 & 0,637 & 0,680 & 0,760 \\
+SVR               & 0,836 & 0,145 & 0,813 & 0,669 & 0,769 & 0,776 \\
+MLP               & $-1,00$ & $-1,06$ & $-1,40$ & $-1,37$ & $-2,49$ & $-1,52$ \\
 \midrule
 \multicolumn{7}{l}{\textit{MAE (kcal/mol)}} \\
-Random Forest     & 0,426 & 0,631 & 0,374 & 0,682 & 0,290 & 0,521 \\
-Gradient Boosting & 0,481 & 0,644 & 0,392 & 0,695 & 0,318 & 0,509 \\
-SVR               & 0,453 & 0,638 & 0,441 & 0,674 & 0,301 & 0,487 \\
+Random Forest     & 0,451 & 0,579 & 0,350 & 0,596 & 0,276 & 0,368 \\
+Gradient Boosting & 0,397 & 0,584 & 0,321 & 0,547 & 0,273 & 0,314 \\
+SVR               & 0,371 & 1,003 & 0,379 & 0,525 & 0,287 & 0,352 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+El modelo MLP obtiene R² negativo en las seis proteínas (peor que predecir
+la media), indicio de sobreajuste severo con solo 56 muestras y se
+descarta como candidato viable.
 
 ### Resultados del Modelo 3: clasificador
 
@@ -77,12 +87,20 @@ un valor de 1 es perfecto.}
 \toprule
 \textbf{Modelo} & \textbf{AUC-ROC} & \textbf{Accuracy} & \textbf{F1} \\
 \midrule
-Gradient Boosting & 0,983 & 0,965 & 0,966 \\
-Random Forest     & 0,978 & 0,932 & 0,934 \\
-SVC               & 0,971 & 0,896 & 0,898 \\
+Random Forest     & 0,957 & 0,927 & 0,947 \\
+Gradient Boosting & 0,904 & 0,891 & 0,920 \\
+SVC               & 0,636 & 0,715 & 0,817 \\
+MLP               & 0,626 & 0,611 & 0,656 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+SVC y MLP rinden notablemente peor que los modelos basados en árboles,
+probablemente por el desbalance de clases (37 favorables / 19
+desfavorables) y la alta dimensionalidad relativa al tamaño muestral.
+Un test de permutación de etiquetas (20 repeticiones) da un AUC medio de
+$0,52$ bajo la hipótesis nula, confirmando que la capacidad discriminativa
+del mejor modelo no es producto del azar.
 
 ### Variables más importantes según SHAP
 
@@ -98,21 +116,27 @@ indicadores de tamaño o complejidad molecular.
 \toprule
 \textbf{Rank} & \textbf{Variable} & \textbf{SHAP medio} \\
 \midrule
-1  & BertzCT (complejidad topológica) & 0,540 \\
-2  & NumBonds (número de enlaces)     & 0,160 \\
-3  & MW (peso molecular)              & 0,140 \\
-4  & ExactMW (peso molecular exacto)  & 0,130 \\
-5  & HeavyAtomCount (átomos pesados)  & 0,112 \\
-6  & NumAtoms (número de átomos)      & 0,108 \\
-7  & Chi1 (índice de conectividad)    & 0,094 \\
-8  & Chi2                             & 0,087 \\
-9  & Kappa1 (índice de forma)         & 0,081 \\
-10 & TPSA (superficie polar)          & 0,063 \\
+1  & BertzCT (complejidad topológica)          & 0,273 \\
+2  & NumBonds (número de enlaces)              & 0,111 \\
+3  & MW (peso molecular)                       & 0,109 \\
+4  & ExactMW (peso molecular exacto)            & 0,074 \\
+5  & ATSC2p (autocorrelación 2D, polarizabilidad) & 0,059 \\
+6  & ATSC2v (autocorrelación 2D, volumen de van der Waals) & 0,057 \\
+7  & ATSC2m (autocorrelación 2D, masa atómica)  & 0,052 \\
+8  & ATSC1m (autocorrelación 2D, masa atómica)  & 0,051 \\
+9  & Chi0v (índice de conectividad valencia)    & 0,044 \\
+10 & ATSC0v (autocorrelación 2D, volumen de van der Waals) & 0,042 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Ningún descriptor de polaridad superficial (COSMO-RS) ni de patrón de
-subestructura (fingerprints) entra en el top 10 para P-gp. La forma y el
-tamaño de la molécula explican mejor el reconocimiento de esta bomba que
-su química concreta.
+Con las cinco familias de descriptores realmente presentes en el
+entrenamiento, cuatro de los diez primeros puestos los ocupan descriptores
+de autocorrelación de Mordred (ATSC*), que capturan cómo varían propiedades
+atómicas (masa, volumen, polarizabilidad) a lo largo del grafo molecular.
+Ningún perfil sigma (COSMO-RS) ni bit de fingerprint entra en el top 10
+para P-gp: la forma y el tamaño de la molécula --- ahora descritos tanto
+por índices 2D clásicos como por descriptores topológicos de Mordred ---
+siguen explicando mejor el reconocimiento de esta bomba que su química
+concreta, reforzando la conclusión original con un espacio de descriptores
+más completo.

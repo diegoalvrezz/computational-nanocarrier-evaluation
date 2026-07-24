@@ -23,19 +23,15 @@ covalentes en 15 complejos. Los residuos clave de FR$\alpha$ (SER174,
 ARG103) y P-gp (ILE730, LEU312, LEU757) coinciden con los datos
 cristalográficos publicados, lo que valida las poses de docking obtenidas.
 
-4. Los modelos de regresión superaron R$^2 = 0,7$ en tres proteínas: P-gp
-(R$^2 = 0,836$, SVR, MAE = $0,371$ kcal/mol), TfR1 ($0,857$, Gradient
-Boosting) y Lisozima ($0,769$, SVR). El conjunto final de 1097
-descriptores (tras eliminar columnas constantes o con datos ausentes de
-un total de 4179 calculados) es suficientemente informativo para
-predecir la afinidad de unión con este dataset.
+4. Random Forest superó R$^2 = 0,7$ en tres proteínas: P-gp
+(R$^2 = 0,817$, MAE = $0,426$ kcal/mol), TfR1 ($0,753$) y Lisozima
+($0,712$). El conjunto de 2908 descriptores es suficientemente informativo
+para predecir la afinidad de unión con este dataset.
 
 5. El ITI identifica Triethylene glycol (100), Tetraethylenepentamine
-($87,3$) y Pentaethylenehexamine ($85,0$) como los candidatos más
-favorables, seguidos por Chitotriose ($84,7$) y Chitobiose ($82,7$),
-cuya posición alta está además respaldada de forma independiente por el
-análisis PLIP. Todos son componentes habituales en formulaciones de
-nanopartículas clínicas.
+($87,3$), Pentaethylenehexamine ($85,0$), Chitotriose ($84,7$) y
+Chitobiose ($82,7$) como los candidatos más favorables. Todos son
+componentes habituales en formulaciones de nanopartículas clínicas.
 
 6. El análisis ADMET confirma que el 80% de los fármacos modelo son
 sustratos de P-gp frente al 0% de los monómeros de degradación. Ese
@@ -44,17 +40,14 @@ alto: al encapsular el fármaco, se reduce la exposición directa a la
 bomba de expulsión.
 
 7. El descriptor BertzCT, que mide la complejidad topológica de una
-molécula, tiene el mayor peso en el análisis SHAP (valor medio $0,27$),
-seguido de NumBonds ($0,11$) y MW ($0,11$). P-gp selecciona sus
+molécula, tiene el mayor peso en el análisis SHAP (valor medio $0,54$),
+seguido de NumBonds ($0,16$) y MW ($0,14$). P-gp selecciona sus
 sustratos principalmente por tamaño y complejidad estructural, no por
 grupos químicos concretos.
 
-8. El clasificador binario alcanza AUC-ROC = $0,957$ y Accuracy =
-$0,927$ (Random Forest); un test de permutación de etiquetas confirma
-que esta capacidad discriminativa no es producto del azar (AUC medio con
-etiquetas aleatorias $= 0,52$). El espacio de descriptores moleculares
-separa razonablemente bien las moléculas favorables de las desfavorables
-para drug delivery.
+8. El clasificador binario alcanza AUC-ROC = $0,983$ y Accuracy =
+$0,965$. El espacio de descriptores moleculares separa bien las
+moléculas favorables de las desfavorables para drug delivery.
 
 9. La herramienta Streamlit permite evaluar cualquier molécula nueva
 introduciendo su SMILES: calcula descriptores, predice el perfil de
