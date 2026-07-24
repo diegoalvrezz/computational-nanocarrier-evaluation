@@ -21,7 +21,7 @@ Fase 1 & Semanas 1--2  & Revisión bibliográfica sobre nanopartículas
                          Formación en TURBOMOLE \cite{turbomole},
                          AutoDock Vina \cite{eberhardt2021} y
                          RDKit \cite{rdkit}. \\
-Fase 2 & Semanas 3--4  & Construcción de la base de datos molecular (58
+Fase 2 & Semanas 3--4  & Construcción de la base de datos molecular (60
                          moléculas). Obtención de estructuras desde PubChem.
                          Generación de coordenadas 3D iniciales con RDKit. \\
 Fase 3 & Semanas 4--8  & Cálculos cuánticos (B3LYP-D4/def2-TZVP) en
